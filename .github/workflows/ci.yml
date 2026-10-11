@@ -30,16 +30,27 @@ jobs:
       - name: UI scripts parse
         run: node --check ui/app.js && node --check ui/speedtest.js
 
-  # Build a real Caddy with this module, the way users will.
+  # Build a real Caddy with this module, the way users will: the oldest Caddy
+  # go.mod supports, on the Go it names, and the newest Caddy on current Go.
   xcaddy:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - caddy: v2.11.4
+            go-version-file: go.mod
+          - caddy: latest
+            go-version: stable
+    name: xcaddy (Caddy ${{ matrix.caddy }})
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-go@v7
         with:
-          go-version-file: go.mod
+          go-version-file: ${{ matrix.go-version-file }}
+          go-version: ${{ matrix.go-version }}
       - run: go install github.com/caddyserver/xcaddy/cmd/xcaddy@v0.4.7
-      - run: xcaddy build --with github.com/cinderblock/caddy-librespeed=.
+      - run: xcaddy build ${{ matrix.caddy }} --with github.com/cinderblock/caddy-librespeed=.
       - run: ./caddy list-modules | grep -x http.handlers.librespeed
       - name: Caddyfile adapts
         run: |
