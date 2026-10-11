@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Speed test</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="style.css" />
+    <script type="module" src="app.js"></script>
+  </head>
+  <body>
+    <main class="viz-root">
+      <header>
+        <h1>Speed test</h1>
+        <p class="sub" id="ip">&nbsp;</p>
+      </header>
+
+      <div class="controls">
+        <label for="server">Server</label>
+        <select id="server" disabled>
+          <option>Loading…</option>
+        </select>
+        <button id="start" type="button" disabled>Start</button>
+      </div>
+
+      <p id="status" class="status" role="status" aria-live="polite">&nbsp;</p>
+      <p id="error" class="error" role="alert" hidden></p>
+
+      <section class="tiles" aria-label="Results">
+        <div class="tile" id="tile-download">
+          <span class="label"><span class="key key-1" aria-hidden="true"></span>Download</span>
+          <span class="value"><span class="num">–</span> <span class="unit">Mbps</span></span>
+        </div>
+        <div class="tile" id="tile-upload">
+          <span class="label"><span class="key key-2" aria-hidden="true"></span>Upload</span>
+          <span class="value"><span class="num">–</span> <span class="unit">Mbps</span></span>
+        </div>
+        <div class="tile" id="tile-ping">
+          <span class="label">Ping</span>
+          <span class="value"><span class="num">–</span> <span class="unit">ms</span></span>
+        </div>
+        <div class="tile" id="tile-jitter">
+          <span class="label">Jitter</span>
+          <span class="value"><span class="num">–</span> <span class="unit">ms</span></span>
+        </div>
+      </section>
+
+      <section class="chart-card" aria-labelledby="chart-title">
+        <div class="chart-head">
+          <h2 id="chart-title">Throughput over each test (Mbps)</h2>
+          <ul class="legend">
+            <li><span class="line-key key-1" aria-hidden="true"></span>Download</li>
+            <li><span class="line-key key-2" aria-hidden="true"></span>Upload</li>
+          </ul>
+        </div>
+        <div class="chart" id="chart"></div>
+        <details>
+          <summary>Samples</summary>
+          <table id="samples">
+            <thead>
+              <tr><th scope="col">Time (s)</th><th scope="col">Download (Mbps)</th><th scope="col">Upload (Mbps)</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </details>
+      </section>
+
+      <footer>
+        <p>
+          Speeds are averages over each test, excluding the shaded warm-up. Served by
+          <a href="https://github.com/cinderblock/caddy-librespeed">caddy-librespeed</a>.
+        </p>
+      </footer>
+    </main>
+  </body>
+</html>

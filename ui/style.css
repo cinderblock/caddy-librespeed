@@ -1,0 +1,421 @@
+.viz-root {
+  color-scheme: light;
+  --page: #f9f9f7;
+  --surface-1: #fcfcfb;
+  --text-primary: #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted: #898781;
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --border: rgba(11, 11, 11, 0.1);
+  --wash: rgba(11, 11, 11, 0.04);
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --critical: #d03b3b;
+  --accent: #2a78d6;
+  --accent-ink: #ffffff;
+}
+@media (prefers-color-scheme: dark) {
+  .viz-root {
+    color-scheme: dark;
+    --page: #0d0d0d;
+    --surface-1: #1a1a19;
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted: #898781;
+    --grid: #2c2c2a;
+    --axis: #383835;
+    --border: rgba(255, 255, 255, 0.1);
+    --wash: rgba(255, 255, 255, 0.05);
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --accent: #3987e5;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  line-height: 1.4;
+}
+
+.viz-root {
+  min-height: 100vh;
+  background: var(--page);
+  color: var(--text-primary);
+  padding: 32px 16px 48px;
+}
+
+.viz-root > * {
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+h1 {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0;
+}
+
+h2 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.sub,
+.status,
+footer {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.sub {
+  margin: 4px 0 0;
+}
+
+.controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 24px;
+}
+
+.controls label {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+select,
+button {
+  font: inherit;
+  /* 16px or more stops iOS Safari zooming the page when the menu is focused. */
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+}
+
+select {
+  flex: 1;
+  min-width: 0;
+  background: var(--surface-1);
+  color: var(--text-primary);
+}
+
+button {
+  min-width: 96px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: transparent;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+@media (max-width: 480px) {
+  .controls {
+    flex-wrap: wrap;
+  }
+  .controls label {
+    flex: 1 1 100%;
+  }
+  .controls select {
+    flex: 1 1 100%;
+  }
+  .controls button {
+    flex: 1 1 100%;
+    padding: 12px;
+  }
+}
+
+button.stop {
+  background: var(--surface-1);
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+
+.status {
+  margin-top: 12px;
+  margin-bottom: 0;
+  min-height: 1.4em;
+}
+
+.error {
+  margin-top: 8px;
+  margin-bottom: 0;
+  color: var(--critical);
+  font-size: 14px;
+}
+
+.error::before {
+  content: '⚠ ';
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+}
+
+@media (max-width: 560px) {
+  .tiles {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.tile,
+.chart-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.tile {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tile .label {
+  color: var(--text-secondary);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tile .num {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.tile .unit {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.tile.active .num {
+  color: var(--text-secondary);
+}
+
+.key {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.line-key {
+  display: inline-block;
+  width: 14px;
+  height: 2px;
+  border-radius: 1px;
+}
+
+.key-1 {
+  background: var(--series-1);
+}
+
+.key-2 {
+  background: var(--series-2);
+}
+
+.chart-card {
+  margin-top: 16px;
+  padding: 14px 14px 10px;
+}
+
+.chart-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 14px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chart {
+  position: relative;
+  margin-top: 8px;
+}
+
+.chart svg {
+  display: block;
+  max-width: 100%;
+  overflow: visible;
+  /* Horizontal drags scrub the readout; vertical ones still scroll the page. */
+  touch-action: pan-y;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.chart svg:focus {
+  outline: none;
+}
+
+.chart svg:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.chart .grid {
+  stroke: var(--grid);
+  stroke-width: 1;
+}
+
+.chart .baseline {
+  stroke: var(--axis);
+  stroke-width: 1;
+}
+
+.chart .tick {
+  fill: var(--text-muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.chart .warmup {
+  fill: var(--wash);
+}
+
+.chart .warmup-label {
+  fill: var(--text-muted);
+  font-size: 11px;
+}
+
+.chart .series {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.chart .s1 {
+  stroke: var(--series-1);
+}
+
+.chart .s2 {
+  stroke: var(--series-2);
+}
+
+.chart .dot {
+  stroke: var(--surface-1);
+  stroke-width: 2;
+}
+
+.chart .dot.s1 {
+  fill: var(--series-1);
+}
+
+.chart .dot.s2 {
+  fill: var(--series-2);
+}
+
+.chart .end-label {
+  fill: var(--text-secondary);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.chart .crosshair {
+  stroke: var(--axis);
+  stroke-width: 1;
+}
+
+.tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  white-space: nowrap;
+}
+
+.tooltip .t {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.tooltip .row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tooltip .row strong {
+  font-variant-numeric: tabular-nums;
+}
+
+.tooltip .row span:last-child {
+  color: var(--text-secondary);
+}
+
+details {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+summary {
+  cursor: pointer;
+}
+
+table {
+  margin-top: 8px;
+  border-collapse: collapse;
+  width: 100%;
+  font-variant-numeric: tabular-nums;
+}
+
+th,
+td {
+  text-align: right;
+  padding: 3px 8px;
+  border-bottom: 1px solid var(--grid);
+}
+
+th {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+footer {
+  margin-top: 24px;
+}
+
+footer a {
+  color: inherit;
+}

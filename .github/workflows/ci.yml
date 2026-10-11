@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+    tags: ['v*']
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+      - name: gofmt
+        if: runner.os == 'Linux'
+        run: test -z "$(gofmt -l .)" || { gofmt -l .; exit 1; }
+      - run: go vet ./...
+      # The race detector needs cgo; Windows runners are tested without it.
+      - run: go test ${{ runner.os == 'Linux' && '-race' || '' }} ./...
+      - name: UI scripts parse
+        run: node --check ui/app.js && node --check ui/speedtest.js
+
+  # Build a real Caddy with this module, the way users will.
+  xcaddy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+      - run: go install github.com/caddyserver/xcaddy/cmd/xcaddy@v0.4.7
+      - run: xcaddy build --with github.com/cinderblock/caddy-librespeed=.
+      - run: ./caddy list-modules | grep -x http.handlers.librespeed
+      - name: Caddyfile adapts
+        run: |
+          printf 'example.com {\n\tlibrespeed {\n\t\tmax_upload_size 64MiB\n\t\tserver "Here" https://example.com/\n\t}\n}\n' > Caddyfile
+          ./caddy adapt --config Caddyfile --validate
